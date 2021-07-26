@@ -219,13 +219,7 @@ analysis <- readRDS('./Results/analysis_post_run_SA.rds') #reads in analysis obj
 impact_results <- readRDS('./Results/SA_sc.rds')
 ```
 
-Were there any strata that were too sparse to analyze?
 
-```{r sparse, results="asis", echo=F}
-if (!is.null(names(analysis$sparse_groups[analysis$sparse_groups])) && length(names(analysis$sparse_groups[analysis$sparse_groups])) != 0) {
-  print(xtable(data.frame("Sparse Groups" = names(analysis$sparse_groups[analysis$sparse_groups]), check.names = FALSE), align = "cc"), type="html")
-}
-```
 
 ### Compare estimates from different models
 This shows the estimated rate ratio and 95% credible intervals from a synthetic controls analysis; a time-trend analysis where we used the specified denominator (all non-respiratory deaths) to adjust the number of pneumonia deaths in each month and a linear trend for time; a classic interrupted time series analysis (segmented regression); and the STL+PCA approach, which smooths and combines the control variables prior to including them in the model. 
@@ -235,10 +229,11 @@ results.table<- cbind.data.frame(
   impact_results$full$rr_mean_intervals, 
   impact_results$time$rr_mean_intervals, 
   #impact_results$time_no_offset$rr_mean_intervals, 
-  impact_results$its$rr_mean_intervals, 
-  impact_results$pca$rr_mean_intervals)
+  impact_results$its$rr_mean_intervals)
+
   table<-xtable(results.table)
-  htmlTable(table)
+
+    htmlTable(table)
 ```
 
 
@@ -259,6 +254,14 @@ names(cum3)<-c('Stratum','Cases Averted (95% CrI)')
 ```
 
 
+Look at the betas--which are most influential?
+
+```{r}
+beta.check <- lapply(impact_results$full$groups,'[[','beta')
+
+beta.check <- lapply(beta.check,function(x) x[order(-abs(x[,1])),])
+beta.check
+```
 
 
 ## Generate and save the plots
