@@ -1,5 +1,5 @@
 ---
-title: 
+title: "Synthetic Controls"
 
 output:
   rmdformats::readthedown:
@@ -24,8 +24,9 @@ Load the libraries we need for this exercise.
 ```{r}
 #install.packages(c('lubridate', 'RCurl','devtools','xtable','knitr','htmlTable','coda','rmdformats','httr'))
 #library(devtools) 
+#install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE)
+#devtools::install_version("future", version = "1.19.1", repos = "http://cran.us.r-project.org")
 #devtools::install_github('https://github.com/weinbergerlab/InterventionEvaluatR')
-#install_version("future", version = "1.19.1", repos = "http://cran.us.r-project.org")
 
 
 library(lubridate)
@@ -295,11 +296,6 @@ str(ds)
 
 This function runs Interrupted time series analysis, an alternative time trend analysis, synthetic controls, and STL+PCA. All of these results are saved in the object 'impact_results'. 
 
-### Run ITS analysis
-
-```{r}
-
-```
 
 
 ### Set parameters for analysis with InterventionEvaluatR
