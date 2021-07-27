@@ -1,7 +1,5 @@
 ---
-title: Tutorial on the evaluation of vaccines with administrative data
-  data
-subtitle: A companion to the WHO reference guide
+title: "Synthetic Controls"
 output:
   rmdformats::readthedown:
     code_folding: show
@@ -25,7 +23,10 @@ Load the libraries we need for this exercise. The first time you do this, run th
 ```{r}
 #install.packages(c('lubridate', 'RCurl','devtools','xtable','knitr','htmlTable','coda','rmdformats','httr'))
 #library(devtools) 
+#install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE)
+#devtools::install_version("future", version = "1.19.1", repos = "http://cran.us.r-project.org")
 #devtools::install_github('https://github.com/weinbergerlab/InterventionEvaluatR')
+
 library(lubridate)
 library(RCurl)
 library(knitr)
@@ -338,6 +339,16 @@ Check the variable types
 ```{r}
 str(ds)
 ```
+
+### Sort data by age group and month
+```{r}
+    ds<-ds[order( ds$age_group, ds$monthdate),] #Sort data by age group and month
+```
+
+
+## Run analyses
+
+This function runs Interrupted time series analysis, an alternative time trend analysis, synthetic controls, and STL+PCA. All of these results are saved in the object 'impact_results'. 
 
 
 ### Set parameters for analysis
