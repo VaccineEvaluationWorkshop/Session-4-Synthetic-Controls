@@ -37,7 +37,7 @@ library(httr)
 library(pbapply)
 library(INLA)
 library(xtable)
-
+library(ggplot2)
 
 ```
 
@@ -130,20 +130,48 @@ d2 <- d2[d2$age %in% c('1-11 months', '1-4 years','65-79 years'),]
 
 
 ## Plot your time series
+We will build up a nicer looking plot. First, we have all 3 time series on same plot area.
 ```{r, fig.width=8, fig.height=3}
-par(mfrow=c(1,3))
-d2.spl <- split(d2, factor(d2$age))
-lapply(names(d2.spl), function(x){
-  y <- d2.spl[[x]]
- plot(y$date,y$Pneum,  #names of variable
-      type='l', #'l' for line plot
-      bty='l' ,#turn off the top and right border
-      main=x
-      )
-})
+
+ p1 <- ggplot(d2, aes(x=date, y=Pneum, group=age)) +
+      geom_line() 
+
 ```
 
+use a 'facet_wrap" to create a different plot for each age group. scales='free' allows the axis range to differ for each plot
+```{r, fig.width=8, fig.height=3}
 
+ p2 <- ggplot(d2, aes(x=date, y=Pneum, group=age)) +
+      geom_line() +
+      facet_wrap(~age , scales='free') 
+p2
+
+```
+Use "classic" theme--gets rid of gray background
+
+```{r, fig.width=8, fig.height=3}
+
+ p3 <- ggplot(d2, aes(x=date, y=Pneum, group=age)) +
+      geom_line() +
+      facet_wrap(~age , scales='free') +
+      theme_classic()
+p3
+
+```
+Add labels and reference line a y=0 (this also automatically extends the axis down to 0, which is desirable)
+
+```{r, fig.width=8, fig.height=3}
+
+ p4 <- ggplot(d2, aes(x=date, y=Pneum, group=age)) +
+      geom_line() +
+      facet_wrap(~age , scales='free') +
+      theme_classic() +
+     ylab("Number of pneumonia deaths") +
+      xlab("Date") + 
+      geom_hline(yintercept=0, col='gray', lty=2) 
+ p4
+
+```
 
 
 ## Set parameters for analysis with InterventionEvaluatR
