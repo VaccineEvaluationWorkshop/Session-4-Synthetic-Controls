@@ -24,16 +24,13 @@ Load the libraries we need for this exercise.
 ```{r}
 #install.packages(c('lubridate', 'RCurl','devtools','xtable','knitr','htmlTable','coda','rmdformats','httr'))
 #library(devtools) 
-#devtools::install_github('https://github.com/weinbergerlab/InterventionEvaluatR')
-#install_version("future", version = "1.19.1", repos = "http://cran.us.r-project.org")
-
-#devtools::install_github('https://github.com/DanWeinberger/InterventionEvaluatR-lite')
+#devtools::install_github("https://github.com/weinbergerlab/InterventionEvaluatR", ref='InterventionEvaluatR-lite')
 
 library(lubridate)
 library(RCurl)
 library(knitr)
 library(htmlTable)
-library(InterventionEvaluatRlite)
+library(InterventionEvaluatR)
 library(coda)
 library(rmdformats)
 library(httr)
@@ -180,8 +177,8 @@ set.seed(1)
 
 Before getting into more complicated analyses, we will first try to fit a simple Poisson regression model (with overdispersion) where we adjust for seasonality and 1 control variable at a time. this allows us to see how the use of different controls influences the results
 
-```{r univariate, echo = T, results = 'hide',warning=FALSE, message = FALSE}
-# glmer_results= evaluatr.univariate(analysis)
+```{r univariate, eval=F, echo = T, results = 'hide',warning=FALSE, message = FALSE}
+ glmer_results= evaluatr.univariate(analysis)
 ```
 
 
@@ -211,57 +208,17 @@ proc.time() - ptm
 
 saveRDS(analysis,'./Results/analysis_post_run_SA.rds') #reads in analysis object that was modified after running SC
 
+saveRDS(impact_results,'./Results/SA_sc.rds')
 ```
+
 Load the pre-run results
 ```{r}
 #saveRDS(impact_results,'./Results/SA_sc.rds')
 analysis <- readRDS('./Results/analysis_post_run_SA.rds') #reads in analysis object that was modified after running SC
+
 impact_results <- readRDS('./Results/SA_sc.rds')
 ```
 
-
-
-### Compare estimates from different models
-This shows the estimated rate ratio and 95% credible intervals from a synthetic controls analysis; a time-trend analysis where we used the specified denominator (all non-respiratory deaths) to adjust the number of pneumonia deaths in each month and a linear trend for time; a classic interrupted time series analysis (segmented regression); and the STL+PCA approach, which smooths and combines the control variables prior to including them in the model. 
-```{r Comparison of estimates from different models, results="asis"}
-results.table<- cbind.data.frame(
-  #impact_results$best$rr_mean_intervals, 
-  impact_results$full$rr_mean_intervals, 
-  impact_results$time$rr_mean_intervals, 
-  #impact_results$time_no_offset$rr_mean_intervals, 
-  impact_results$its$rr_mean_intervals)
-
-  table<-xtable(results.table)
-
-    htmlTable(table)
-```
-
-
-### Cases averted
-How many cases were prevented from the time of vaccine introduction to the last time point in each stratum (+/- 95% CrI)? You can modify the number 'last.point' to pull out the cumulative number of cases at any point in the time series. In this case we are printing results fromthe SC model
-```{r}
-last.point<-dim(impact_results$full$cumsum_prevented)[1]
-cum.prevented<-impact_results$full$cumsum_prevented[last.point,,]
-```
-
-Format and print table 
-```{r}
-cum1<- round(t(cum.prevented))
-cum2<- paste0(cum1[,'50%'], ' (', cum1[,'2.5%'],', ',cum1[,'97.5%'],')')
-cum3<-cbind.data.frame(row.names(cum1), cum2)
-names(cum3)<-c('Stratum','Cases Averted (95% CrI)')
-  htmlTable(cum3, align='l')
-```
-
-
-Look at the betas--which are most influential?
-
-```{r}
-beta.check <- lapply(impact_results$full$groups,'[[','beta')
-
-beta.check <- lapply(beta.check,function(x) x[order(-abs(x[,1])),])
-beta.check
-```
 
 
 ## Generate and save the plots
@@ -310,6 +267,50 @@ for (group in names(plots$groups)) {
       print(plots$groups[[group]]$pred_pca_agg )
 }
 ```
+
+
+### Compare estimates from different models
+This shows the estimated rate ratio and 95% credible intervals from a synthetic controls analysis; a time-trend analysis where we used the specified denominator (all non-respiratory deaths) to adjust the number of pneumonia deaths in each month and a linear trend for time; a classic interrupted time series analysis (segmented regression); and the STL+PCA approach, which smooths and combines the control variables prior to including them in the model. 
+```{r Comparison of estimates from different models, results="asis"}
+results.table<- cbind.data.frame(
+  #impact_results$best$rr_mean_intervals, 
+  impact_results$full$rr_mean_intervals, 
+  impact_results$time$rr_mean_intervals, 
+  #impact_results$time_no_offset$rr_mean_intervals, 
+  impact_results$its$rr_mean_intervals)
+
+  table<-xtable(results.table)
+
+    htmlTable(table)
+```
+
+
+### Cases averted
+How many cases were prevented from the time of vaccine introduction to the last time point in each stratum (+/- 95% CrI)? You can modify the number 'last.point' to pull out the cumulative number of cases at any point in the time series. In this case we are printing results fromthe SC model
+```{r}
+last.point<-dim(impact_results$full$cumsum_prevented)[1]
+cum.prevented<-impact_results$full$cumsum_prevented[last.point,,]
+```
+
+Format and print table 
+```{r}
+cum1<- round(t(cum.prevented))
+cum2<- paste0(cum1[,'50%'], ' (', cum1[,'2.5%'],', ',cum1[,'97.5%'],')')
+cum3<-cbind.data.frame(row.names(cum1), cum2)
+names(cum3)<-c('Stratum','Cases Averted (95% CrI)')
+  htmlTable(cum3, align='l')
+```
+
+
+Look at the betas--which are most influential?
+
+```{r}
+beta.check <- lapply(impact_results$full$groups,'[[','beta')
+
+beta.check <- lapply(beta.check,function(x) x[order(-abs(x[,1])),])
+beta.check
+```
+
 
 ## Save results
 ```{r save_results, echo=FALSE}
