@@ -207,11 +207,11 @@ Before getting into more complicated analyses, we will first try to fit a simple
 
 ```{r univariate, eval=F, echo = T, results = 'hide',warning=FALSE, message = FALSE}
  glmer_results= evaluatr.univariate(analysis)
+# saveRDS(glmer_results,'./Results/univariate_results_SA.rds')
 ```
 
 
 ```{r}
-#saveRDS(glmer_results,'./Results/univariate_results_SA.rds')
 glmer_results  <- readRDS('./Results/univariate_results_SA.rds')
 ```
 
