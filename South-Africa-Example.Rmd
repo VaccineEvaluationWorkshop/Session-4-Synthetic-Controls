@@ -15,11 +15,19 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Introduction to the Example
 
-## Getting started
-Before starting, you should install R and Rstudio on your computer. R can be downloaded from here: https://cran.r-project.org/mirrors.html. and RStudio can be downloaded from https://rstudio.com/products/rstudio/. Both are free. Once both programs are installed, open RStudio, and either open the .Rmd file practical exercises.Rmd or create a new RMarkdown document File/New File/R Notebook.
+In this example, you will learn about:
+  1. How to perform visual quality checks
+  2. How to fit models to the data to evaluate vaccine impact
+  3. How to interpret and describe the results 
 
-Load the libraries we need for this exercise. 
+In this example, we will analyze data on deaths due to pneumonia in South Africa to evaluate the impact of PCVs. This example is based on the analysis by Jackie Kleynhans et al (PLOS Medicine 2021), available from https://pubmed.ncbi.nlm.nih.gov/33591995/. The data and code for the original study can be found at https://github.com/weinbergerlab/south_africa_kleynhans
+
+South Africa introduced PCV7 in 2009. Estimating the impact of the vaccine on mortality is especially challenging in this setting because of unrelated changes in the incidence of HIV and the rollout of antiretroviral therapies, both of which had a strong influence on death rates due to pneumonia. There are a number of potential control causes of death that could be used to adjust for these trends. 
+
+
+### Load the libraries we need for this exercise. 
 
 ```{r}
 #install.packages(c('lubridate', 'RCurl','devtools','xtable','knitr','htmlTable','coda','rmdformats','httr'))
@@ -40,20 +48,6 @@ library(xtable)
 library(ggplot2)
 
 ```
-
-
-## Introduction to the Example
-
-In this example, you will learn about:
-  1. How to perform visual quality checks
-  2. How to fit models to the data to evaluate vaccine impact
-  3. How to interpret and describe the results 
-
-In this example, we will analyze data on deaths due to pneumonia in South Africa to evaluate the impact of PCVs. This example is based on the analysis by Kleynhans et al (PLOS Medicine 2021), available from https://pubmed.ncbi.nlm.nih.gov/33591995/. The data and code for the original study can be found at https://github.com/weinbergerlab/south_africa_kleynhans
-
-South Africa introduced PCV7 in 2009. Estimating the impact of the vaccine on mortality is especially challenging in this setting because of unrelated changes in the incidence of HIV and the rollout of antiretroviral therapies, both of which had a strong influence on death rates due to pneumonia. There are a number of potential control causes of death that could be used to adjust for these trends. 
-
-
 
 ## Read in and explore data
 ```{r}
