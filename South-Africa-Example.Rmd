@@ -1,5 +1,6 @@
 ---
 title: Evaluating the impact of PCVs on pneumonia mortality in South Africa
+author: Dan Weinberger (Based on analysis by Jackie Kleynhans)
 output:
   rmdformats::readthedown:
     code_folding: show
